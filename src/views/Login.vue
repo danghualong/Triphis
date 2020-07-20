@@ -39,8 +39,11 @@
   </div>
 </template>
 <script>
+import { login2 } from "../plugins/api/userService";
+
 export default {
   name: "login",
+  mounted() {},
   data() {
     return {
       username: "",
@@ -49,17 +52,25 @@ export default {
     };
   },
   methods: {
-    login: function() {
+    login: async function() {
       if (this.username.trim().length <= 0) {
         this.errorContent = "用户名不能为空";
         return;
       }
-      if (this.password.trim().length <= 0) {
+      if (this.password.length <= 0) {
         this.errorContent = "密码不能为空";
         return;
       }
-
-      this.$router.push({ name: "home" });
+      let user = { userName: this.username.trim(), password: this.password };
+      try {
+        let result = await login2(user);
+        if (result) {
+          this.$store.commit("updateToken", result.userToken);
+          this.$router.push({ name: "home" });
+        }
+      } catch (ex) {
+        console.log(ex);
+      }
     },
     clear: function() {
       this.username = "";
