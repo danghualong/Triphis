@@ -1,3 +1,3 @@
 export default {
-  LOGIN_URL: "/login"
+  LOGIN_URL: "/oauth/token"
 };

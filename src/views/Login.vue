@@ -2,7 +2,7 @@
   <div class="flex-row page">
     <el-card>
       <el-row class="title">
-        <el-col>云迅宠物医院管理信息系统</el-col>
+        <el-col>云讯宠物医院管理信息系统</el-col>
       </el-row>
       <el-row class="flex-row row">
         <el-col :span="10">
@@ -29,17 +29,21 @@
       </el-row>
       <el-row class="flex-row row">
         <el-col :span="12">
-          <el-button type="primary" round @click="login">登录</el-button>
+          <el-button type="primary" size="small" round @click="login"
+            >登录</el-button
+          >
         </el-col>
         <el-col :span="12">
-          <el-button type="info" round @click="clear">清空</el-button>
+          <el-button type="info" size="small" round @click="clear"
+            >清空</el-button
+          >
         </el-col>
       </el-row>
     </el-card>
   </div>
 </template>
 <script>
-import { login2 } from "../plugins/api/userService";
+import { login as loginService } from "../plugins/api/userService";
 
 export default {
   name: "login",
@@ -61,14 +65,22 @@ export default {
         this.errorContent = "密码不能为空";
         return;
       }
-      let user = { userName: this.username.trim(), password: this.password };
+      let user = { UserName: this.username.trim(), Password: this.password };
       try {
-        let result = await login2(user);
-        if (result) {
-          this.$store.commit("updateToken", result.userToken);
-          this.$router.push({ name: "home" });
+        let result = await loginService(user);
+        if (result && result.code == 200) {
+          this.$store.commit("updateToken", result.content.token);
+          let redirectUrl = this.$route.query.redirect;
+          if (redirectUrl) {
+            this.$router.push({ path: redirectUrl });
+          } else {
+            this.$router.push({ name: "home" });
+          }
+        } else {
+          this.errorContent = result.error;
         }
       } catch (ex) {
+        this.errorContent = ex.error;
         console.log(ex);
       }
     },
@@ -109,5 +121,8 @@ export default {
 }
 .hide {
   visibility: collapse;
+}
+.error {
+  color: red;
 }
 </style>

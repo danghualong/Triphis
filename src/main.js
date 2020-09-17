@@ -15,6 +15,7 @@ Vue.use(Select);
 
 router.beforeEach((to, from, next) => {
   if (!to.meta.authless) {
+    console.log(store.state);
     if (store.state.userToken) {
       next();
     } else {

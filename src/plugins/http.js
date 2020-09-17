@@ -15,17 +15,20 @@ axios.interceptors.request.use(
 );
 
 var post = function(url, data) {
-  // eslint-disable-next-line no-unused-vars
   return new Promise((resolve, reject) => {
-    console.log("resolved");
-    resolve({ userName: "danghualong", userToken: "83fc" });
+    axios
+      .post(url, data)
+      .then(res => {
+        if (res.status == 200) {
+          resolve(res.data);
+        } else {
+          reject(res.error);
+        }
+      })
+      .catch(err => {
+        reject(err.response.data);
+      });
   });
-  // return new Promise((resolve, reject) => {
-  //   axios
-  //     .post(url, data)
-  //     .then(res => resolve(res.data))
-  //     .catch(err => reject(err.data));
-  // });
 };
 
 export default {
